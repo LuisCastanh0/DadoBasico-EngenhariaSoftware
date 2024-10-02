@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Navbar from '../components/nav-bar';
 
 export default function AddData() {
   const [tables, setTables] = useState([]);
@@ -17,6 +18,7 @@ export default function AddData() {
     const res = await fetch(`/api/get-table?id=${tableId}`);
     const data = await res.json();
     setSelectedTable(data.table);
+
     // Inicializar formData
     const initialData = {};
     data.table.columns.forEach((col) => {
@@ -43,9 +45,15 @@ export default function AddData() {
   };
 
   return (
-    <div>
-      <h1>Adicionar Dados</h1>
-      <select onChange={handleTableSelect}>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <Navbar />
+      
+      <h1 className="mt-20 text-3xl font-bold text-blue-600 mb-6">Adicionar Dados</h1>
+
+      <select
+        onChange={handleTableSelect}
+        className="w-full max-w-md p-3 mb-6 border border-gray-300 rounded-lg text-black"
+      >
         <option value="">Selecione uma tabela</option>
         {tables.map((table) => (
           <option key={table.id} value={table.id}>
@@ -53,20 +61,30 @@ export default function AddData() {
           </option>
         ))}
       </select>
+
       {selectedTable && (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">{selectedTable.name}</h2>
+          
           {selectedTable.columns.map((col) => (
-            <div key={col.id}>
-              <label>{col.name}</label>
+            <div key={col.id} className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">{col.name}</label>
               <input
                 type={col.type === 'number' ? 'number' : 'text'}
                 value={formData[col.name]}
                 onChange={(e) => handleInputChange(col.name, e.target.value)}
                 required
+                className="w-full p-3 border border-gray-300 rounded-lg text-black"
               />
             </div>
           ))}
-          <button type="submit">Adicionar</button>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Adicionar
+          </button>
         </form>
       )}
     </div>
