@@ -1,21 +1,27 @@
 import prisma from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { tableId, data } = req.body;
+export async function POST(request) {
+  try {
+    const { tableId, data } = await request.json();
 
-    try {
-      await prisma.tableData.create({
-        data: {
-          data,
-          table: { connect: { id: tableId } },
-        },
-      });
-      res.status(200).json({ message: 'Dados adicionados com sucesso.' });
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao adicionar dados.' });
+    if (!tableId || !data || typeof data !== 'object') {
+      return NextResponse.json(
+        { error: 'Dados inválidos para adicionar.' },
+        { status: 400 }
+      );
     }
-  } else {
-    res.status(405).json({ error: 'Método não permitido.' });
+
+    await prisma.tableData.create({
+      data: {
+        data: JSON.stringify(data),
+        table: { connect: { id: parseInt(tableId) } },
+      },
+    });
+
+    return NextResponse.json({ message: 'Dados adicionados com sucesso.' }, { status: 200 });
+  } catch (error) {
+    console.error('Erro ao adicionar dados:', error);
+    return NextResponse.json({ error: 'Erro ao adicionar dados.' }, { status: 500 });
   }
 }
