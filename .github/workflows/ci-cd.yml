@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+
+    steps:
+    - name: Checkout do Código
+      uses: actions/checkout@v3
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Instalar Dependências
+      run: npm install
+
+    - name: Executar Testes
+      run: npm test
+
+    - name: Build do Projeto
+      run: npm run build
+
+    - name: Deploy para Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ./
+      env:
+        VERCEL_ENV: production
