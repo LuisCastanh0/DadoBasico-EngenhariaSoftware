@@ -1,3 +1,4 @@
+# .github/workflows/test.yml
 name: CI/CD Pipeline
 
 on:
@@ -7,39 +8,39 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.17.0]
-
     steps:
-    - name: Checkout do Código
-      uses: actions/checkout@v3
+      - name: Checkout do Código
+        uses: actions/checkout@v3
 
-    - name: Configurar Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
 
-    - name: Instalar Dependências
-      run: npm install
+      - name: Instalar Dependências
+        run: npm install
 
-    # - name: Executar Testes
-    #  run: npm test
+      - name: Configurar Banco de Dados SQLite
+        run: |
+          touch dev.db
+          echo "DATABASE_URL=file:./dev.db" >> $GITHUB_ENV
 
-    - name: Build do Projeto
-      run: npm run build
+      - name: Executar Migrações do Prisma
+        run: npx prisma migrate deploy
 
-    - name: Deploy para Vercel
-      uses: amondnet/vercel-action@v20
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: ./
-      env:
-        VERCEL_ENV: production
+      - name: Build do Projeto
+        run: npm run build
+
+      - name: Deploy para Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: ./
+        env:
+          VERCEL_ENV: production
