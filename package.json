@@ -2,17 +2,18 @@
   "name": "meu-projeto",
   "version": "0.1.0",
   "private": true,
-"scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "prisma:migrate": "prisma migrate deploy",
-  "prisma:generate": "prisma generate",
-  "postinstall": "prisma generate",
-  "test": "jest"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate",
+    "test": "jest"
+  },
   "dependencies": {
     "@prisma/client": "^5.20.0",
+    "mysql2": "^3.11.3",
     "next": "14.2.14",
     "pg": "^8.13.0",
     "react": "^18",
