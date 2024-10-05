@@ -1,0 +1,17 @@
+/* app/swagger/swagger.css */
+
+.swagger-ui-wrapper {
+    /* Reseta estilos do Tailwind dentro deste contêiner */
+    all: initial;
+    * {
+      all: unset;
+    }
+  
+    /* Reaplica estilos básicos necessários */
+    display: block;
+  }
+  
+  .swagger-ui-wrapper * {
+    all: revert;
+  }
+  

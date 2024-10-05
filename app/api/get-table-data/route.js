@@ -1,6 +1,38 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+/**
+ * @swagger
+ * /api/get-table-data:
+ *   get:
+ *     summary: Retorna os dados armazenados em uma tabela específica.
+ *     tags:
+ *       - Dados
+ *     parameters:
+ *       - in: query
+ *         name: tableId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID da tabela cujos dados devem ser retornados.
+ *     responses:
+ *       200:
+ *         description: Dados da tabela obtidos com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/TableData'
+ *       400:
+ *         description: tableId é necessário.
+ *       500:
+ *         description: Erro ao obter dados da tabela.
+ */
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);

@@ -1,6 +1,38 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
+/**
+ * @swagger
+ * /api/get-table:
+ *   get:
+ *     summary: Retorna a definição de uma tabela específica.
+ *     tags:
+ *       - Tabelas
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID da tabela a ser obtida.
+ *     responses:
+ *       200:
+ *         description: Tabela obtida com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 table:
+ *                   $ref: '#/components/schemas/TableDefinition'
+ *       400:
+ *         description: ID da tabela é necessário.
+ *       404:
+ *         description: Tabela não encontrada.
+ *       500:
+ *         description: Erro ao obter tabela.
+ */
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
