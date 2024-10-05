@@ -11,6 +11,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      db:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout do Código
         uses: actions/checkout@v3
@@ -19,14 +34,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          cache: 'npm'
 
       - name: Instalar Dependências
-        run: npm install
+        run: npm ci
 
-      - name: Configurar Banco de Dados SQLite
+      - name: Configurar variáveis de ambiente
         run: |
-          touch dev.db
-          echo "DATABASE_URL=file:./dev.db" >> $GITHUB_ENV
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/testdb" >> $GITHUB_ENV
 
       - name: Executar Migrações do Prisma
         run: npx prisma migrate deploy
