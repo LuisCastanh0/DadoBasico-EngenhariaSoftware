@@ -5,6 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 // prisma/schema.prisma
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,23 +16,27 @@ generator client {
 }
 
 model TableDefinition {
-  id       Int                @id @default(autoincrement())
-  name     String
-  columns  ColumnDefinition[]
-  data     TableData[]
+  id              Int               @id @default(autoincrement())
+  name            String
+  columns         ColumnDefinition[]
+  tableData       TableData[]
 }
 
 model ColumnDefinition {
-  id       Int       @id @default(autoincrement())
-  name     String
-  type     String
-  table    TableDefinition @relation(fields: [tableId], references: [id])
-  tableId  Int
+  id        Int            @id @default(autoincrement())
+  name      String
+  type      String
+  tableId   Int
+  table     TableDefinition @relation(fields: [tableId], references: [id])
+
+  @@index([tableId])
 }
 
 model TableData {
-  id       Int                @id @default(autoincrement())
-  data     String
-  table    TableDefinition    @relation(fields: [tableId], references: [id])
-  tableId  Int
+  id        Int             @id @default(autoincrement())
+  data      Json
+  tableId   Int
+  table     TableDefinition @relation(fields: [tableId], references: [id])
+
+  @@index([tableId])
 }
